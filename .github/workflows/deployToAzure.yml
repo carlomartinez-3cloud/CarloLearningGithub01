@@ -40,6 +40,9 @@ jobs:
          scope: resourcegroup
          resourceGroupName: ${{ env.resourceGroupName }}
          template: main.bicep
+         parameters: storageAccountPrefix=ghaction
+         deploymentName: "gh${{github.run_id}}"
+         
 
 
               
