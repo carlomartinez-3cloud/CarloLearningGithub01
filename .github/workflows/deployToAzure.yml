@@ -8,6 +8,9 @@ on:
 
   workflow_dispatch:
 
+env:
+  resourceGroupName: GitHubExampleRG
+
 jobs:
 
   deploy:
@@ -28,14 +31,14 @@ jobs:
       - name: Azure PowerShell Action
         uses: Azure/powershell@v2
         with:
-         inlineScript: New-AzResourceGroup -Name "GitExampleRG" -Location "East US" -Force
+         inlineScript: New-AzResourceGroup -Name ${{ env.resourceGroupName }} -Location "East US" -Force
          azPSVersion: latest
 
       - name: Deploy Azure Resource Manager (ARM) Template
         uses: Azure/arm-deploy@v2
         with:
          scope: resourcegroup
-         resourceGroupName: GitExampleRG
+         resourceGroupName: ${{ env.resourceGroupName }}
          template: main.bicep
 
 
