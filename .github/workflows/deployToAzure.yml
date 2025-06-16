@@ -1,0 +1,44 @@
+name: DeployToAzure
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+  workflow_dispatch:
+
+jobs:
+
+  deploy:
+
+    runs-on: unbutu-latest
+
+    steps:
+    
+      - uses: actions/checkout@v3
+
+      - name: Azure Login
+        uses: Azure/login@v2.3.0
+        with:
+    
+         creds: ${{ secrets.AZURE_CREDENTIALS }}
+         enable-AzPSSession: true
+
+      - name: Azure PowerShell Action
+        uses: Azure/powershell@v2
+        with:
+         inlineScript: New-AzResourceGroup -Name "GitExampleRG" -Location "East US" -Force
+         azPSVersion: latest
+
+      - name: Deploy Azure Resource Manager (ARM) Template
+        uses: Azure/arm-deploy@v2
+        with:
+         scope: resourcegroup
+         resourceGroupName: GitExampleRG
+         template: main.bicep
+
+
+              
+
+      
