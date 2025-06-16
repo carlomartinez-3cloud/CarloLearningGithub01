@@ -30,8 +30,15 @@ jobs:
       - name: Create the ResourceGroup
         uses: Azure/powershell@v2
         with:
-         inlineScript: New-AzResourceGroup -Name ${{ env.resourceGroupName }} -Location East US -Force
+         inlineScript: New-AzResourceGroupDeployment -ResourceGroupName ${{ env.resourceGroupName }} -Location "East US" -Force
          azPSVersion: latest
+
+      - name: Perform Whatif Test
+        uses: Azure/powershell@v2
+        with:
+         inlineScript: New-AzResourceGroupDeployment -ResourceGroupName ${{ env.resourceGroupName }} -TemplateFile main.bicep -WhatIf
+         azPSVersion: latest
+               
 
       - name: Build the bicep file into arm
         uses: Azure/cli@v2.1.0
