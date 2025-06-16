@@ -24,22 +24,26 @@ jobs:
       - name: Azure Login
         uses: Azure/login@v2.3.0
         with:
-    
          creds: ${{ secrets.AZURE_CREDENTIALS }}
          enable-AzPSSession: true
 
-      - name: Azure PowerShell Action
+      - name: Create the ResourceGroup
         uses: Azure/powershell@v2
         with:
-         inlineScript: New-AzResourceGroup -Name ${{ env.resourceGroupName }} -Location "East US" -Force
+         inlineScript: New-AzResourceGroup -Name ${{ env.resourceGroupName }} -Location East US -Force
          azPSVersion: latest
 
-      - name: Deploy Azure Resource Manager (ARM) Template
+      - name: Build the bicep file into arm
+        uses: Azure/cli@v2.1.0
+        with:
+         inlineScript: az bicep build --file main.bicep --outfile ./main.json
+                  
+      - name: Deploy arm
         uses: Azure/arm-deploy@v2
         with:
          scope: resourcegroup
          resourceGroupName: ${{ env.resourceGroupName }}
-         template: main.bicep
+         template: main.json
          parameters: storageAccountPrefix=ghaction
          deploymentName: "gh${{github.run_id}}"
          
